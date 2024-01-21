@@ -88,6 +88,14 @@ export default function App() {
 
 
   const handleSelectionChange = useCallback(async () => {
+    console.log('handleSelectionChange');
+
+    fetch('/search_and_replace')
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error(error))
+
+    // ===test
     if (isFetchingRef.current) {
       console.log("Previous fetch in progress, cancelling...");
       return; // 如果正在获取数据，则取消
