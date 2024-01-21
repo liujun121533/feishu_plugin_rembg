@@ -1,54 +1,55 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, Response, send_file
 from playground.search_and_replace import search_and_replace_func
-
-from flask_cors import CORS
-
-app = Flask(__name__)
-# CORS(app, resources={r"/": {"origins": "118.89.145.103"}})
-CORS(app)
-
-
+import io
 from rembg import remove
 from rembg.session_factory import new_session
+from PIL import Image
+import time
+
+app = Flask(__name__)
 
 model_name = "u2netp"
 session = new_session(model_name)
 
-from PIL import Image
-import time
 
-
-@app.route('/')
+@app.route("/")
 def index():
-  return render_template('dist/index.html')
-  # return 'Hello from Flask!'
+    return render_template("dist/index.html")
+    # return 'Hello from Flask!'
 
 
-@app.route('/search_and_replace')
+@app.route("/search_and_replace")
 def search_and_replace():
-  # search_and_replace_func('abc', '123')
-  return 'success！！！'
+    # search_and_replace_func('abc', '123')
+    return "success！！！"
 
 
-@app.route('/remove_image_bg')
+@app.route("/api/remove_image_bg", methods=["POST", "GET"])
 def remove_image_bg():
-  # search_and_replace_func('abc', '123')
-  print('start remove_image_bg')
-  start_time = time.time()
+    """
+    files["image"]: 待处理图片
+    """
+    if request.method != "POST":
+        return
+    print("start remove_image_bg")
+    start_time = time.time()
 
-  input_path = 'generated_horse.png'
-  output_path = 'output.png'
+    im_file = request.files["image"]
+    im_bytes = im_file.read()
+    im = Image.open(io.BytesIO(im_bytes))
 
-  input = Image.open(input_path)
-  output = remove(input, session=session)
-  output.save(output_path)
+    output_path = "output.png"
+    output = remove(im, session=session)
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"Execution time: {execution_time} seconds")
 
-  # Your function call goes here
+    output.save(output_path)
 
-  end_time = time.time()
-  execution_time = end_time - start_time
-  print(f"Execution time: {execution_time} seconds")
-  return 'success！！！'
+    img_io = io.BytesIO()
+    output.save(img_io, "PNG")
+    img_io.seek(0)
+    return send_file(img_io, mimetype="image/jpeg")
 
 
-app.run(host='0.0.0.0', port=9000, debug=True, ssl_context='adhoc')
+app.run(host="0.0.0.0", port=9000, debug=True, ssl_context="adhoc")

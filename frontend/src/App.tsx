@@ -249,13 +249,16 @@ export default function App() {
 
 
         if (WHITE_LIST.includes(item.type.split('/')[1])) {
-          file = await imageCompression(item.file, {
-            maxSizeMB: 2,
-            maxWidthOrHeight: 1024,
-            useWebWorker: true,
-            initialQuality: (100 - compressNum) / 100,
-            alwaysKeepResolution: true
-          });
+          // TODO: 调用自己的api接口
+          file = await doRemoveBgFromAPI(item.file, item.file.name);
+
+          // file = await imageCompression(item.file, {
+          //   maxSizeMB: 2,
+          //   maxWidthOrHeight: 1024,
+          //   useWebWorker: true,
+          //   initialQuality: (100 - compressNum) / 100,
+          //   alwaysKeepResolution: true
+          // });
 
         } else file = item.file
 
@@ -273,6 +276,25 @@ export default function App() {
   async function fetchImageAsFile(url: string, name: string): Promise<File> {
     // 使用 fetch 获取图片
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    // 将响应转换为 Blob
+    const blob = await response.blob();
+    // 创建并返回 File 对象
+    return new File([blob], name, { type: blob.type });
+  }
+
+  // 获取去除背景以后的照片转File对象
+  async function doRemoveBgFromAPI(imageFile: File, name: string): Promise<File> {
+
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch('/api/remove_image_bg', {
+      method: 'POST',
+      body: formData
+    });
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
