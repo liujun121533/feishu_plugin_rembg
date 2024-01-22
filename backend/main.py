@@ -44,7 +44,7 @@ def remove_image_bg():
     execution_time = end_time - start_time
     print(f"Execution time: {execution_time} seconds")
 
-    output.save(output_path)
+    # output.save(output_path)
 
     img_io = io.BytesIO()
     output.save(img_io, "PNG")

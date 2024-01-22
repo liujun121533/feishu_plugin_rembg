@@ -6,7 +6,7 @@
   "cell": "Compress the currently selected cell",
   "field": "Compress the current table column",
   "popconfirm": "Are you sure you want to update?",
-  "compress": "Compress",
+  "remove_bg": "Matting",
   "apply": "Apply",
   "text_cell": "Please select the cell where the image is located first",
   "text_field": "Please select the columns where the image is located first",

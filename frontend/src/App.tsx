@@ -89,13 +89,7 @@ export default function App() {
 
   const handleSelectionChange = useCallback(async () => {
     console.log('handleSelectionChange');
-
-    fetch('/search_and_replace')
-      .then(response => response.text())
-      .then(data => console.log(data))
-      .catch(error => console.error(error))
-
-    // ===test
+    
     if (isFetchingRef.current) {
       console.log("Previous fetch in progress, cancelling...");
       return; // 如果正在获取数据，则取消
@@ -220,7 +214,7 @@ export default function App() {
 
         const res: ImageRecordList[] = images.filter(item => item.images.length > 0)
 
-        setImageRecordList(res);
+        setImageRecordList(res); //选择变化的时候更新
       } catch (e) {
         console.log(e)
       }
@@ -250,7 +244,7 @@ export default function App() {
 
         if (WHITE_LIST.includes(item.type.split('/')[1])) {
           // TODO: 调用自己的api接口
-          file = await doRemoveBgFromAPI(item.file, item.file.name);
+          file = await doRemoveBgFromAPI(item.file, item.name);
 
           // file = await imageCompression(item.file, {
           //   maxSizeMB: 2,
@@ -259,6 +253,7 @@ export default function App() {
           //   initialQuality: (100 - compressNum) / 100,
           //   alwaysKeepResolution: true
           // });
+          // console.log("file: ", file)
 
         } else file = item.file
 
@@ -336,13 +331,13 @@ export default function App() {
         imageRecordList.map(item => {
           console.log(item)
           return item.images.map(img => {
-            console.log(img)
+            console.log("img: ", img)
             return <Space vertical key={img.name}>
               <Image
               preview={false}
                 width={100}
                 height={100}
-                src={img.url}
+                src={URL.createObjectURL(img.file)}
               />
               <Typography.Title heading={6} style={{ margin: '8px 0' }} >
                 {formatFileSize(img.file.size)}
@@ -371,7 +366,7 @@ export default function App() {
 
           }} initValues={{ compressNum, pattern }}>
             <Form.Section text={t('title')}>
-              <Form.Slider max={100} min={1} field='compressNum' label={
+              {/* <Form.Slider max={100} min={1} field='compressNum' label={
                 <Space>
                   <span> {t('size')}:{compressNum}</span>
                   <Tooltip content={t('tip')}>
@@ -379,7 +374,7 @@ export default function App() {
 
                   </Tooltip>
                 </Space>
-              } />
+              } /> */}
 
               <Form.Select field='pattern' label={t('mode')} onChange={e => onPatternChange(e as string)}>
                 <Form.Select.Option value="cell">{t('cell')}</Form.Select.Option>
@@ -390,7 +385,7 @@ export default function App() {
           </Form>
 
           <Space>
-            <Button disabled={imageRecordList.length === 0 || loading} theme='solid' onClick={handleCompress} >{t('compress')}</Button>
+            <Button disabled={imageRecordList.length === 0 || loading} theme='solid' onClick={handleCompress} >{t('remove_bg')}</Button>
             <Popconfirm
               title={t('popconfirm')}
               onConfirm={confirmCompress}
