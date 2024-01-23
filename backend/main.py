@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, Response, send_file
 from playground.search_and_replace import search_and_replace_func
-import io
+import io, os
 from rembg import remove
 from rembg.session_factory import new_session
 from PIL import Image
 import time
+
+os.environ['U2NET_HOME'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/models')
 
 app = Flask(__name__)
 
@@ -24,7 +26,7 @@ def search_and_replace():
     return "success！！！"
 
 
-@app.route("/api/remove_image_bg", methods=["POST", "GET"])
+@app.route("/api/remove_image_bg", methods=["POST"])
 def remove_image_bg():
     """
     files["image"]: 待处理图片
