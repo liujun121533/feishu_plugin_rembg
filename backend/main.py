@@ -54,4 +54,4 @@ def remove_image_bg():
     return send_file(img_io, mimetype="image/jpeg")
 
 
-app.run(host="0.0.0.0", port=9000, debug=True, ssl_context="adhoc")
+app.run(host="0.0.0.0", port=9000, debug=False, ssl_context="adhoc")

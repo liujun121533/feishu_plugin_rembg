@@ -190,7 +190,7 @@ export default function App() {
           if (imgItems) {
 
             imgs = await Promise.all(imgItems.filter((img: { type: string; }) => img.type.startsWith('image')).map(async img => {
-              console.log(img)
+              // console.log(img)
               const url = await table.getAttachmentUrl(img.token, selection?.fieldId as string, recordId as string) as string;
               console.log(url)
 
@@ -210,7 +210,7 @@ export default function App() {
           };
         }));
 
-        console.log(images)
+        // console.log(images)
 
         const res: ImageRecordList[] = images.filter(item => item.images.length > 0)
 
@@ -323,21 +323,23 @@ export default function App() {
 
 
   const ImageListEl = () => {
-    console.log(imageRecordList)
+    // console.log(imageRecordList)
 
     // return <div>123123</div>
     return <>
       {
         imageRecordList.map(item => {
-          console.log(item)
+          // console.log(item)
           return item.images.map(img => {
-            console.log("img: ", img)
+            // console.log("img: ", img)
+            let tmp_img = new globalThis.Image();
+            tmp_img.src = URL.createObjectURL(img.file);
             return <Space vertical key={img.name}>
               <Image
               preview={false}
                 width={100}
-                height={100}
-                src={URL.createObjectURL(img.file)}
+                height={100*tmp_img.height/tmp_img.width}
+                src={tmp_img.src}
               />
               <Typography.Title heading={6} style={{ margin: '8px 0' }} >
                 {formatFileSize(img.file.size)}
