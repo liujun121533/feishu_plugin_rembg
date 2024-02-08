@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "python-template"
+name = "feishu_plugin_rembg"
 version = "0.1.0"
-description = ""
+description = "a feishu plugin for remove picture background"
 authors = ["liujun"]
 
 [tool.poetry.dependencies]
